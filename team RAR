@@ -1,0 +1,127 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Instagram, Search } from "lucide-react";
+import { motion } from "framer-motion";
+
+const products = [
+  {
+    league: "Premier League",
+    teams: [
+      "Manchester City", "Arsenal", "Liverpool", "Manchester United", "Chelsea",
+      "Tottenham", "Newcastle United", "Aston Villa", "West Ham United", "Brighton"
+    ]
+  },
+  {
+    league: "La Liga",
+    teams: [
+      "Real Madrid", "Barcelona", "Atletico Madrid", "Sevilla", "Real Sociedad",
+      "Real Betis", "Villarreal", "Athletic Club", "Valencia", "Osasuna"
+    ]
+  },
+  {
+    league: "Serie A",
+    teams: [
+      "Inter Milan", "AC Milan", "Juventus", "Napoli", "Roma",
+      "Lazio", "Atalanta", "Fiorentina", "Torino", "Bologna"
+    ]
+  },
+  {
+    league: "Bundesliga",
+    teams: [
+      "Bayern Munich", "Borussia Dortmund", "RB Leipzig", "Bayer Leverkusen", "Union Berlin",
+      "Freiburg", "Eintracht Frankfurt", "Mainz", "Wolfsburg", "Hoffenheim"
+    ]
+  },
+  {
+    league: "Ligue 1",
+    teams: [
+      "Paris Saint-Germain", "Marseille", "Lyon", "Monaco", "Lille",
+      "Rennes", "Nice", "Reims", "Strasbourg", "Toulouse"
+    ]
+  },
+];
+
+export default function HomePage() {
+  const [search, setSearch] = useState("");
+  const [openLeague, setOpenLeague] = useState(null);
+
+  const handleSearch = (team) => team.toLowerCase().includes(search.toLowerCase());
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
+      <header className="text-center py-10">
+        <h1 className="text-5xl font-bold">Official Team RAR7</h1>
+        <p className="mt-4 text-lg text-gray-300">
+          Selling Top Quality Football Jerseys from All Major Leagues
+        </p>
+        <Button
+          className="mt-6 bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-full"
+          onClick={() => window.open("https://www.instagram.com/officialteamrar7/", "_blank")}
+        >
+          <Instagram className="mr-2 h-5 w-5" />
+          Visit our Instagram
+        </Button>
+        <div className="mt-6 flex justify-center">
+          <div className="relative w-full max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search for a team..."
+              className="w-full bg-gray-800 text-white rounded-full pl-10 pr-4 py-2 border border-gray-700 focus:outline-none"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+      </header>
+
+      <main className="space-y-10 px-8 pb-20">
+        {products.map((product, index) => {
+          const filteredTeams = product.teams.filter(handleSearch);
+          if (filteredTeams.length === 0) return null;
+
+          return (
+            <motion.div
+              key={product.league}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <h2
+                className="text-3xl font-bold mb-4 cursor-pointer hover:text-pink-500"
+                onClick={() => setOpenLeague(openLeague === product.league ? null : product.league)}
+              >
+                {product.league}
+              </h2>
+              {openLeague === product.league && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {filteredTeams.map((team) => (
+                    <a href="https://www.instagram.com/officialteamrar7/" target="_blank" rel="noopener noreferrer" key={team}>
+                      <Card className="bg-gray-900 border-gray-700 overflow-hidden">
+                        <img
+                          src={`/images/jerseys/${team.toLowerCase().replace(/ /g, '-')}.jpg`}
+                          alt={`${team} Jersey`}
+                          className="w-full h-48 object-cover"
+                        />
+                        <CardContent className="p-4">
+                          <h3 className="text-lg font-semibold">{team}</h3>
+                          <p className="text-gray-400 text-sm">Available in all sizes</p>
+                        </CardContent>
+                      </Card>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
+      </main>
+
+      <footer className="text-center text-gray-500 py-6 text-sm">
+        &copy; {new Date().getFullYear()} Official Team RAR7. All rights reserved.
+      </footer>
+    </div>
+  );
+}
+
